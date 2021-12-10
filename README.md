@@ -22,3 +22,8 @@ Responds to reads and writes at the given BASE_ADDRESS (defaults to 0x3000_000)
 * Starts reading a 32 bit word at address 0 from the shared RAM.
 * Every period cycles, update the DAC output.
 * After the last 8 bit word is put on the DAC output, start a new wishbone request for the next 32 bits of data.
+
+# Dependencies
+
+* cocotb
+* cocotb bus extension for wishbone
