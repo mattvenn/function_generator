@@ -7,7 +7,7 @@ module generator #(
 
     DATA PARTITION  NAME            DESCRIPTION
     15:0            period          clock cycles between putting next data on the output
-    23:16           ram_end_addr  where to start reading the data in the shared RAM
+    23:16           ram_end_addr    where to start reading the data in the shared RAM
     24              run             if high, set the design running
 
     */
