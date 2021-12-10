@@ -1,0 +1,106 @@
+[*]
+[*] GTKWave Analyzer v3.3.111 (w)1999-2020 BSI
+[*] Fri Dec 10 13:43:08 2021
+[*]
+[dumpfile] "/home/matt/work/asic-workshop/course/function_generator/generator.vcd"
+[dumpfile_mtime] "Fri Dec 10 13:41:40 2021"
+[dumpfile_size] 499966
+[savefile] "/home/matt/work/asic-workshop/course/function_generator/generator.gtkw"
+[timestart] 0
+[size] 2211 1332
+[pos] -1 -1
+*-24.900002 6360000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 343
+[signals_width] 628
+[sst_expanded] 1
+[sst_vpaned_height] 410
+@28
+generator.caravel_wb_rst_i
+generator.caravel_wb_clk_i
+@22
+generator.caravel_wb_addr_i[31:0]
+@28
+generator.caravel_wb_cyc_i
+generator.caravel_wb_stb_i
+generator.caravel_wb_we_i
+@c00022
+generator.caravel_wb_dat_i[31:0]
+@28
+(0)generator.caravel_wb_dat_i[31:0]
+(1)generator.caravel_wb_dat_i[31:0]
+(2)generator.caravel_wb_dat_i[31:0]
+(3)generator.caravel_wb_dat_i[31:0]
+(4)generator.caravel_wb_dat_i[31:0]
+(5)generator.caravel_wb_dat_i[31:0]
+(6)generator.caravel_wb_dat_i[31:0]
+(7)generator.caravel_wb_dat_i[31:0]
+(8)generator.caravel_wb_dat_i[31:0]
+(9)generator.caravel_wb_dat_i[31:0]
+(10)generator.caravel_wb_dat_i[31:0]
+(11)generator.caravel_wb_dat_i[31:0]
+(12)generator.caravel_wb_dat_i[31:0]
+(13)generator.caravel_wb_dat_i[31:0]
+(14)generator.caravel_wb_dat_i[31:0]
+(15)generator.caravel_wb_dat_i[31:0]
+(16)generator.caravel_wb_dat_i[31:0]
+(17)generator.caravel_wb_dat_i[31:0]
+(18)generator.caravel_wb_dat_i[31:0]
+(19)generator.caravel_wb_dat_i[31:0]
+(20)generator.caravel_wb_dat_i[31:0]
+(21)generator.caravel_wb_dat_i[31:0]
+(22)generator.caravel_wb_dat_i[31:0]
+(23)generator.caravel_wb_dat_i[31:0]
+(24)generator.caravel_wb_dat_i[31:0]
+(25)generator.caravel_wb_dat_i[31:0]
+(26)generator.caravel_wb_dat_i[31:0]
+(27)generator.caravel_wb_dat_i[31:0]
+(28)generator.caravel_wb_dat_i[31:0]
+(29)generator.caravel_wb_dat_i[31:0]
+(30)generator.caravel_wb_dat_i[31:0]
+(31)generator.caravel_wb_dat_i[31:0]
+@1401200
+-group_end
+@28
+generator.caravel_wb_ack_o
+@22
+generator.caravel_wb_dat_o[31:0]
+generator.caravel_wb_sel_i[3:0]
+@200
+-
+@8024
+generator.dac[7:0]
+@20000
+-
+@22
+generator.dac_data[31:0]
+@24
+generator.period[15:0]
+@28
+generator.run
+@200
+-
+@8024
+generator.wait_period[15:0]
+@28
+generator.fetch_next
+@200
+-
+@28
+generator.rambus_wb_ack_i
+@22
+generator.rambus_wb_addr_o[7:0]
+@28
+generator.rambus_wb_clk_o
+generator.rambus_wb_cyc_o
+@22
+generator.rambus_wb_dat_i[31:0]
+generator.rambus_wb_dat_o[31:0]
+@28
+generator.rambus_wb_rst_o
+@22
+generator.rambus_wb_sel_o[3:0]
+@28
+generator.rambus_wb_stb_o
+generator.rambus_wb_we_o
+[pattern_trace] 1
+[pattern_trace] 0
