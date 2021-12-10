@@ -84,14 +84,16 @@ module generator #(
             caravel_wb_ack_o <= (caravel_wb_stb_i && caravel_wb_addr_i == BASE_ADDRESS);
     end
 
-    // FSM for fetching and pushing data
+    // FSM states for DAC
     localparam DAC_STATE_STOP           = 0;
     localparam DAC_STATE_UPDATE         = 1;
     localparam DAC_STATE_WAIT           = 2;
 
+    // FSM states for RAM
     localparam RAM_STATE_WAIT           = 0;
     localparam RAM_STATE_ACK            = 1;
 
+    // Registers
     reg [2:0]   dac_state;
     reg [31:0]  dac_data;
     reg [15:0]  wait_period;
@@ -104,15 +106,15 @@ module generator #(
 
     always @(posedge clk) begin
         if(reset) begin
-            dac         <= 0;
-            dac_state   <= DAC_STATE_STOP;
-            dac_data    <= 0;
-            wait_period <= period;
-            fetch_next  <= 0;
-            fetch_first <= 1;
+            dac                 <= 0;
+            dac_state           <= DAC_STATE_STOP;
+            dac_data            <= 0;
+            wait_period         <= period;
+            fetch_next          <= 0;
+            fetch_first         <= 1;
 
-            ram_address <= 0;
-            ram_state   <= RAM_STATE_WAIT;
+            ram_address         <= 0;
+            ram_state           <= RAM_STATE_WAIT;
             rambus_wb_addr_o    <= 0;
             rambus_wb_stb_o     <= 0;
             rambus_wb_cyc_o     <= 0;
@@ -122,6 +124,7 @@ module generator #(
 
         end else begin
 
+            // FSM for managing DAC output
             case(dac_state)
                 DAC_STATE_STOP: begin
                     if(run)
@@ -149,6 +152,7 @@ module generator #(
 
             endcase
 
+            // FSM for fetching next word over RAMBus
             case(ram_state)
                 RAM_STATE_WAIT: begin
                     if(fetch_next || fetch_first) begin
@@ -182,14 +186,5 @@ module generator #(
             endcase
         end
     end
-            /*
-            // get the data from RAMBus
-            STATE_FETCH:
-                state <= STATE_WAIT_FETCH;
-
-            STATE_WAIT_FETCH:
-                state <= STATE_UPDATE_DAC;
-                dac_data <= rambus_wb_dat_i;
-                */
 
 endmodule
