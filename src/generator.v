@@ -187,4 +187,19 @@ module generator #(
         end
     end
 
+    `ifdef FORMAL
+    reg formal_init = 0;
+    always @(posedge clk) begin
+        formal_init <= 1;
+        assume(reset == !formal_init);
+        if(!reset && formal_init) begin
+            assert(ram_state == RAM_STATE_WAIT || ram_state == RAM_STATE_ACK);
+            assert(dac_state == DAC_STATE_STOP || dac_state == DAC_STATE_UPDATE || dac_state == DAC_STATE_WAIT);
+
+            // fix this - should probably only start reading from ram if an address is actually set via wishbone
+            // assert(ram_address < ram_end_addr);
+        end
+    end
+    `endif
+
 endmodule
