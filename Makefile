@@ -8,7 +8,7 @@ all: test_caravel_bus
 test_caravel_bus:
 	rm -rf sim_build/ results.xml
 	mkdir sim_build/
-	iverilog -o sim_build/sim.vvp -s generator -s dump -g2012 src/generator.v test/dump_generator.v
+	iverilog -o sim_build/sim.vvp -s generator -s dump src/generator.v test/dump_generator.v
 	PYTHONOPTIMIZE=${NOASSERT} MODULE=test_caravel_bus vvp -M $$(cocotb-config --prefix)/cocotb/libs -m libcocotbvpi_icarus sim_build/sim.vvp
 	! grep failure results.xml
 

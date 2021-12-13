@@ -92,7 +92,7 @@ async def test_caravel_bus(dut):
         "cyc"   :   "caravel_wb_cyc_i",
         "stb"   :   "caravel_wb_stb_i",
         "we"    :   "caravel_wb_we_i",
-        "adr"   :   "caravel_wb_addr_i",
+        "adr"   :   "caravel_wb_adr_i",
         "datwr" :   "caravel_wb_dat_i",
         "datrd" :   "caravel_wb_dat_o",
         "ack"   :   "caravel_wb_ack_o"
@@ -101,7 +101,7 @@ async def test_caravel_bus(dut):
         "cyc"   :   "rambus_wb_cyc_o",
         "stb"   :   "rambus_wb_stb_o",
         "we"    :   "rambus_wb_we_o",
-        "adr"   :   "rambus_wb_addr_o",
+        "adr"   :   "rambus_wb_adr_o",
         "datwr" :   "rambus_wb_dat_o",
         "datrd" :   "rambus_wb_dat_i",
         "ack"   :   "rambus_wb_ack_i"
@@ -137,11 +137,11 @@ async def test_caravel_bus(dut):
     await test_wb_set(caravel_bus, base_addr, join_data(period, max_addr, 1))
 
     # start at correct address
-    assert dut.rambus_wb_addr_o == 0
+    assert dut.rambus_wb_adr_o == 0
     for i in range(255 * 2):
         await ClockCycles(dut.caravel_wb_clk_i, period)
         # ensure max address read is < max_addr
-        assert int(dut.rambus_wb_addr_o.value) < max_addr
+        assert int(dut.rambus_wb_adr_o.value) < max_addr
         # ensure value from DAC is correct
         assert dut.dac == (i % 256)
 

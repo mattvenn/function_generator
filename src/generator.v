@@ -22,7 +22,7 @@ module generator #(
     input wire          caravel_wb_we_i,        // write enable
     input wire  [3:0]   caravel_wb_sel_i,       // write word select
     input wire  [31:0]  caravel_wb_dat_i,       // data in
-    input wire  [31:0]  caravel_wb_addr_i,      // address
+    input wire  [31:0]  caravel_wb_adr_i,       // address
     output reg          caravel_wb_ack_o,       // ack
     output reg  [31:0]  caravel_wb_dat_o,       // data out
 
@@ -34,7 +34,7 @@ module generator #(
     output reg          rambus_wb_we_o,         // write enable
     output reg  [3:0]   rambus_wb_sel_o,        // write word select
     output reg  [31:0]  rambus_wb_dat_o,        // data out
-    output reg  [7:0]   rambus_wb_addr_o,       // address
+    output reg  [7:0]   rambus_wb_adr_o,        // address
     input wire          rambus_wb_ack_i,        // ack
     input wire  [31:0]  rambus_wb_dat_i,        // data in
 
@@ -56,12 +56,12 @@ module generator #(
     always @(posedge clk) begin
         if(reset) begin
             period          <= PERIOD;
-            ram_end_addr  <= RAM_END_ADDR;
+            ram_end_addr    <= RAM_END_ADDR;
             run             <= 1'b0;
         end
-        else if(caravel_wb_stb_i && caravel_wb_cyc_i && caravel_wb_we_i && caravel_wb_addr_i == BASE_ADDRESS) begin
+        else if(caravel_wb_stb_i && caravel_wb_cyc_i && caravel_wb_we_i && caravel_wb_adr_i == BASE_ADDRESS) begin
             period          <= caravel_wb_dat_i[15:0];
-            ram_end_addr  <= caravel_wb_dat_i[23:16];
+            ram_end_addr    <= caravel_wb_dat_i[23:16];
             run             <= caravel_wb_dat_i[24];
         end
     end
@@ -70,7 +70,7 @@ module generator #(
     always @(posedge clk) begin
         if(reset)
             caravel_wb_dat_o <= 0;
-        else if(caravel_wb_stb_i && caravel_wb_cyc_i && !caravel_wb_we_i && caravel_wb_addr_i == BASE_ADDRESS) begin
+        else if(caravel_wb_stb_i && caravel_wb_cyc_i && !caravel_wb_we_i && caravel_wb_adr_i == BASE_ADDRESS) begin
             caravel_wb_dat_o <= { 7'b0, run, ram_end_addr, period };
         end
     end
@@ -81,7 +81,7 @@ module generator #(
             caravel_wb_ack_o <= 0;
         else
             // return ack immediately
-            caravel_wb_ack_o <= (caravel_wb_stb_i && caravel_wb_addr_i == BASE_ADDRESS);
+            caravel_wb_ack_o <= (caravel_wb_stb_i && caravel_wb_adr_i == BASE_ADDRESS);
     end
 
     // FSM states for DAC
@@ -115,7 +115,7 @@ module generator #(
 
             ram_address         <= 0;
             ram_state           <= RAM_STATE_WAIT;
-            rambus_wb_addr_o    <= 0;
+            rambus_wb_adr_o     <= 0;
             rambus_wb_stb_o     <= 0;
             rambus_wb_cyc_o     <= 0;
             rambus_wb_dat_o     <= 0;
@@ -157,7 +157,7 @@ module generator #(
                 RAM_STATE_WAIT: begin
                     if(fetch_next || fetch_first) begin
                         ram_state           <= RAM_STATE_ACK;
-                        rambus_wb_addr_o    <= ram_address;
+                        rambus_wb_adr_o     <= ram_address;
                         ram_address         <= ram_address + 1;
 
                         rambus_wb_cyc_o     <= 1;
