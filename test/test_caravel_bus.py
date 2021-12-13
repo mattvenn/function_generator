@@ -8,6 +8,7 @@ from cocotb.binary import BinaryValue
 from cocotb.triggers import RisingEdge, FallingEdge, ClockCycles
 from cocotbext.wishbone.driver import WishboneMaster, WBOp
 from cocotbext.wishbone.monitor import WishboneSlave
+from wb_ram import WishboneRAM
 
 # from J Pallent: 
 # https://github.com/thejpster/zube/blob/9299f0be074e2e30f670fd87dec2db9c495020db/test/test_zube.py
@@ -43,38 +44,12 @@ def split_data(data):
 def join_data(period, ram_addr, run):
     return (run << 24) + ((0xFF & ram_addr) << 16) + (0xFFFF & period)
 
-# return an ack after configurable delay
-class RAMBusACK:
-
-    def __init__(self, delay=0):
-        self.delay = delay
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.delay
-
-# triangle wave generator
-class RAMBusDat:
-
-    def __init__(self, start=0, end=255):
-        self.start = start
-        self.end = end
-        self.num = self.start
-
-    def __iter__(self):
-        return self
-
-    # generate next 4 numbers
-    def __next__(self):
-        num = 0
-        for i in range(4):
-            if self.num > self.end:
-                self.num = self.start
-            num += self.num << (i * 8)
-            self.num += 1
-        return num
+# load a triangle wave into ram
+def init_ram(ram_bus):
+    num = 10 
+    for addr in range(60):
+        ram_bus.data[addr] = num
+        num += 1
 
 @cocotb.test()
 async def test_caravel_bus(dut):
@@ -108,7 +83,10 @@ async def test_caravel_bus(dut):
     }
 
     caravel_bus = WishboneMaster(dut, "", dut.caravel_wb_clk_i, width=32, timeout=10, signals_dict=caravel_bus_signals_dict)
-    ram_bus     = WishboneSlave (dut, "", dut.rambus_wb_clk_o, width=32, signals_dict=ram_bus_signals_dict, datgen=RAMBusDat(), waitreplygen=RAMBusACK(delay=4))
+    ram_bus     = WishboneRAM    (dut, dut.rambus_wb_clk_o, ram_bus_signals_dict)
+
+    # load a triangle wave into the ram, first 15 words (4 bytes per word, so 60 data points), starting at 10, incremementing by 1 each time
+    init_ram(ram_bus)
 
     await reset(dut)
 
@@ -138,10 +116,12 @@ async def test_caravel_bus(dut):
 
     # start at correct address
     assert dut.rambus_wb_adr_o == 0
-    for i in range(255 * 2):
+    for i in range(period * max_addr * 2):
         await ClockCycles(dut.caravel_wb_clk_i, period)
+
         # ensure max address read is < max_addr
         assert int(dut.rambus_wb_adr_o.value) < max_addr
+
         # ensure value from DAC is correct
-        assert dut.dac == (i % 256)
+        assert dut.dac == (i % 60) + 10
 
