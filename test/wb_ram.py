@@ -35,7 +35,8 @@ from cocotbext.wishbone.monitor import WishboneSlave
 
 
 class WishboneRAMReader:
-    def __init__(self, data, wb_addr):
+    def __init__(self, data, wb_addr, base_address):
+        self._base_address = base_address
         self._data = data
         self._wb_addr = wb_addr
 
@@ -44,6 +45,7 @@ class WishboneRAMReader:
 
     def __next__(self):
         addr = self._wb_addr.value << 2
+        addr -= self._base_address
         value = (
             self._data[addr]
             | (self._data[addr+1] << 8)
@@ -53,11 +55,12 @@ class WishboneRAMReader:
 
 
 class WishboneRAM:
-    def __init__(self, dut, clk, signals_dict, size=1024):
+    def __init__(self, dut, clk, signals_dict, size=1024, base_address = 0):
         self._dut = dut
+        self._base_address = base_address
         self.data = [0] * size
         adr_signal = getattr(self._dut, signals_dict['adr'])
-        ram_reader = WishboneRAMReader(self.data, adr_signal)
+        ram_reader = WishboneRAMReader(self.data, adr_signal, base_address)
         self._ram_bus = WishboneSlave(
             dut, "", clk, width=32, signals_dict=signals_dict, datgen=ram_reader)
         self._ram_bus.add_callback(self.rambus_callback)
@@ -67,6 +70,7 @@ class WishboneRAM:
             sel = transaction.sel
             if transaction.datwr:
                 for b in range(4):
-                    if sel & 1 << b:
-                        addr = (transaction.adr << 2) + b
+                    if sel & (1 << b):
+                        addr = ((transaction.adr - self._base_address) << 2) + b
+                        print(hex(addr), hex(self._base_address), len(self.data))
                         self.data[addr] = (transaction.datwr >> (b*8)) & 0xff
