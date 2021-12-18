@@ -116,12 +116,16 @@ async def test_caravel_bus(dut):
 
     # start at correct address
     assert dut.rambus_wb_adr_o == 0
+
+    # sync to start of DAC output
+    await FallingEdge(dut.dbg_dac_start)
     for i in range(period * max_addr * 2):
-        await ClockCycles(dut.caravel_wb_clk_i, period)
+
+        # ensure value from DAC is correct
+        assert dut.dac == (i % 60) + 10
 
         # ensure max address read is < max_addr
         assert int(dut.rambus_wb_adr_o.value) < max_addr
 
-        # ensure value from DAC is correct
-        assert dut.dac == (i % 60) + 10
+        await ClockCycles(dut.caravel_wb_clk_i, period)
 

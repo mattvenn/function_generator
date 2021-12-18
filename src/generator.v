@@ -39,15 +39,34 @@ module generator #(
     input wire  [31:0]  rambus_wb_dat_i,        // data in
 
     // output for driving DAC
-    output reg [7:0]   dac
+    output reg [7:0]    dac,
+
+    // debug outputs
+    output wire         dbg_ram_addr_zero,
+    output wire         dbg_state_run,
+    output wire         dbg_dac_start,
+    output wire         dbg_ram_wb_stb,
+    output wire         dbg_caravel_wb_stb
 );
 
+    // rename some signals
     wire clk = caravel_wb_clk_i;
     assign rambus_wb_clk_o = clk;
     wire reset = caravel_wb_rst_i;
     assign rambus_wb_rst_o = reset;
 
+    // debug outputs
+    assign dbg_ram_addr_zero = ram_address == 0;
+    assign dbg_state_run = run;
+    assign dbg_dac_start = dbg_dac_start_q;
+    assign dbg_ram_wb_stb = rambus_wb_stb_o;
+    assign dbg_caravel_wb_stb = caravel_wb_stb_i;
+    reg dbg_dac_start_q;
+    always @(posedge clk)
+        dbg_dac_start_q = dac_state == DAC_STATE_UPDATE;
 
+
+    // CaravelBus registers
     reg [15:0] period;
     reg [7:0] ram_end_addr;
     reg run;
@@ -93,7 +112,7 @@ module generator #(
     localparam RAM_STATE_WAIT           = 0;
     localparam RAM_STATE_ACK            = 1;
 
-    // Registers
+    // DAC state registers
     reg [2:0]   dac_state;
     reg [31:0]  dac_data;
     reg [15:0]  wait_period;
