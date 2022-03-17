@@ -53,7 +53,7 @@ module generator #(
     wire clk = caravel_wb_clk_i;
     assign rambus_wb_clk_o = clk;
     wire reset = caravel_wb_rst_i;
-    assign rambus_wb_rst_o = reset;
+    // assign rambus_wb_rst_o = reset;
 
     // debug outputs
     assign dbg_ram_addr_zero = ram_address == 0;
@@ -214,6 +214,8 @@ module generator #(
             endcase
         end
     end
+
+    assign rambus_wb_rst_o = reset || (ram_state == RAM_STATE_INIT);
 
     `ifdef FORMAL
     reg formal_init = 0;
