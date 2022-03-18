@@ -53,7 +53,7 @@ module generator #(
     wire clk = caravel_wb_clk_i;
     assign rambus_wb_clk_o = clk;
     wire reset = caravel_wb_rst_i;
-    assign rambus_wb_rst_o = reset;
+    // assign rambus_wb_rst_o = reset;
 
     // debug outputs
     assign dbg_ram_addr_zero = ram_address == 0;
@@ -109,8 +109,9 @@ module generator #(
     localparam DAC_STATE_WAIT           = 2;
 
     // FSM states for RAM
-    localparam RAM_STATE_WAIT           = 0;
-    localparam RAM_STATE_ACK            = 1;
+    localparam RAM_STATE_INIT           = 0;
+    localparam RAM_STATE_WAIT           = 1;
+    localparam RAM_STATE_ACK            = 2;
 
     // DAC state registers
     reg [2:0]   dac_state;
@@ -133,7 +134,7 @@ module generator #(
             fetch_first         <= 1;
 
             ram_address         <= 0;
-            ram_state           <= RAM_STATE_WAIT;
+            ram_state           <= RAM_STATE_INIT;
             rambus_wb_adr_o     <= 0;
             rambus_wb_stb_o     <= 0;
             rambus_wb_cyc_o     <= 0;
@@ -173,6 +174,14 @@ module generator #(
 
             // FSM for fetching next word over RAMBus
             case(ram_state)
+		RAM_STATE_INIT: begin
+		    if (ram_address & 8'h08) begin
+		    	    ram_address <= 0;
+		    	    ram_state <= RAM_STATE_WAIT;
+		    	end else begin
+		    	    ram_address <= ram_address + 1;
+			end
+		    end
                 RAM_STATE_WAIT: begin
                     if(fetch_next || fetch_first) begin
                         ram_state           <= RAM_STATE_ACK;
@@ -206,13 +215,15 @@ module generator #(
         end
     end
 
+    assign rambus_wb_rst_o = reset || (ram_state == RAM_STATE_INIT);
+
     `ifdef FORMAL
     reg formal_init = 0;
     always @(posedge clk) begin
         formal_init <= 1;
         assume(reset == !formal_init);
         if(!reset && formal_init) begin
-            assert(ram_state == RAM_STATE_WAIT || ram_state == RAM_STATE_ACK);
+            assert(ram_state == RAM_STATE_INIT || ram_state == RAM_STATE_WAIT || ram_state == RAM_STATE_ACK);
             assert(dac_state == DAC_STATE_STOP || dac_state == DAC_STATE_UPDATE || dac_state == DAC_STATE_WAIT);
 
             // fix this - should probably only start reading from ram if an address is actually set via wishbone
