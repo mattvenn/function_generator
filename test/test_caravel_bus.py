@@ -119,6 +119,10 @@ async def test_caravel_bus(dut):
 
     # sync to start of DAC output
     await FallingEdge(dut.dbg_dac_start)
+
+    # wait for a 2 whole cycles before the data starts flowing
+    await ClockCycles(dut.caravel_wb_clk_i, 2*period)
+
     for i in range(period * max_addr * 2):
 
         # ensure value from DAC is correct

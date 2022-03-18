@@ -116,6 +116,7 @@ module generator #(
     // DAC state registers
     reg [2:0]   dac_state;
     reg [31:0]  dac_data;
+    reg [31:0]  dac_data_buf;
     reg [15:0]  wait_period;
 
     reg [2:0]   ram_state;
@@ -124,14 +125,18 @@ module generator #(
     reg         fetch_next;
     reg         fetch_first;
 
+    reg [1:0]   byte_count;
+
     always @(posedge clk) begin
         if(reset) begin
             dac                 <= 0;
             dac_state           <= DAC_STATE_STOP;
             dac_data            <= 0;
+            dac_data_buf        <= 0;
             wait_period         <= period;
             fetch_next          <= 0;
             fetch_first         <= 1;
+            byte_count          <= 0;
 
             ram_address         <= 0;
             ram_state           <= RAM_STATE_INIT;
@@ -152,11 +157,12 @@ module generator #(
                     end
 
                 DAC_STATE_UPDATE: begin
-                    dac             <= dac_data[7:0];
-                    dac_data        <= (dac_data >> 8);
+                    dac             <= dac_data_buf[7:0];
+                    byte_count      <= byte_count + 1;
+                    dac_data_buf    <= (dac_data_buf >> 8);
                     dac_state       <= DAC_STATE_WAIT;
                     wait_period     <= period - 1;
-                    if(dac_data[31:8] == 24'b0) // run out of data soon
+                    if(byte_count == 1) // fetch data
                         fetch_next  <= 1;
                     end
 
@@ -205,6 +211,7 @@ module generator #(
                         rambus_wb_cyc_o     <= 0;
                         rambus_wb_stb_o     <= 0;
                         dac_data            <= rambus_wb_dat_i;
+                        dac_data_buf        <= dac_data;
                         ram_state           <= RAM_STATE_WAIT;
                         end
                     end
