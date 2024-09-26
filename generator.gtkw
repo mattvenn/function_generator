@@ -1,19 +1,19 @@
 [*]
-[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sat Dec 18 14:56:14 2021
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Sep 26 08:14:54 2024
 [*]
-[dumpfile] "/home/matt/work/asic-workshop/shuttle3-mpw-3/openlane/designs/wrapped_function_generator/function_generator/generator.vcd"
-[dumpfile_mtime] "Sat Dec 18 14:54:09 2021"
-[dumpfile_size] 598326
-[savefile] "/home/matt/work/asic-workshop/shuttle3-mpw-3/openlane/designs/wrapped_function_generator/function_generator/generator.gtkw"
-[timestart] 127000
-[size] 1848 1016
-[pos] -1 -1
-*-15.900002 250000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/matt/work/asic-workshop/course/function_generator/generator.vcd"
+[dumpfile_mtime] "Thu Sep 26 08:10:31 2024"
+[dumpfile_size] 519504
+[savefile] "/home/matt/work/asic-workshop/course/function_generator/generator.gtkw"
+[timestart] 34480000
+[size] 2232 694
+[pos] -340 240
+*-23.400002 50240000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 343
 [signals_width] 628
 [sst_expanded] 1
-[sst_vpaned_height] 410
+[sst_vpaned_height] 177
 @28
 generator.caravel_wb_rst_i
 generator.caravel_wb_clk_i
@@ -89,8 +89,6 @@ generator.rambus_wb_cyc_o
 @22
 generator.rambus_wb_dat_i[31:0]
 generator.rambus_wb_dat_o[31:0]
-@23
-generator.rambus_wb_adr_o[7:0]
 @28
 generator.rambus_wb_rst_o
 @22
@@ -102,9 +100,22 @@ generator.rambus_wb_we_o
 -
 @28
 generator.dbg_caravel_wb_stb
-generator.dbg_dac_start
-generator.dbg_ram_addr_zero
 generator.dbg_ram_wb_stb
+generator.dbg_dac_start
 generator.dbg_state_run
+generator.dbg_ram_addr_zero
+@800023
+generator.dac[7:0]
+@29
+(0)generator.dac[7:0]
+(1)generator.dac[7:0]
+(2)generator.dac[7:0]
+(3)generator.dac[7:0]
+(4)generator.dac[7:0]
+(5)generator.dac[7:0]
+(6)generator.dac[7:0]
+(7)generator.dac[7:0]
+@1001201
+-group_end
 [pattern_trace] 1
 [pattern_trace] 0

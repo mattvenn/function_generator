@@ -46,10 +46,8 @@ def join_data(period, ram_addr, run):
 
 # load a triangle wave into ram
 def init_ram(ram_bus):
-    num = 10 
-    for addr in range(60):
-        ram_bus.data[addr] = num
-        num += 1
+    for addr in range(256):
+        ram_bus.data[addr] = addr
 
 @cocotb.test()
 async def test_caravel_bus(dut):
@@ -111,7 +109,7 @@ async def test_caravel_bus(dut):
 
     # start running with period 10, up to address 5
     period = 20
-    max_addr = 15
+    max_addr = 64
     await test_wb_set(caravel_bus, base_addr, join_data(period, max_addr, 1))
 
     # start at correct address
@@ -123,10 +121,11 @@ async def test_caravel_bus(dut):
     # wait for a 2 whole cycles before the data starts flowing
     await ClockCycles(dut.caravel_wb_clk_i, 2*period)
 
-    for i in range(period * max_addr * 2):
+    for i in range(512):
 
         # ensure value from DAC is correct
-        assert dut.dac == (i % 60) + 10
+        print(int(dut.dac))
+        assert dut.dac == i % 256
 
         # ensure max address read is < max_addr
         assert int(dut.rambus_wb_adr_o.value) < max_addr
